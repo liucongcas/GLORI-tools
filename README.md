@@ -1,4 +1,5 @@
-Glori-tools currently works, but is still being optimized for a better user experience
+# GLORI-tools
+GLORI-tools currently works, but is still being optimized for a better user experience
 
 一： required
 STAR > v2.7.5c
