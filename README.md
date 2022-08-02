@@ -29,55 +29,62 @@ GLORI-tools is written in Python3 and is executed from the command line. To inst
 * python ≥ v3.8.3
 
 ### GLORI-tools needs the following python package to be installed:
-pysam,pandas,argparse,time,collections,os,sys,re,subprocess,multiprocessing,numpy,scipy,math,sqlite3,Bio,statsmodels
+pysam,pandas,argparse,time,collections,os,sys,re,subprocess,multiprocessing,copy,numpy,scipy,math,sqlite3,Bio,statsmodels,itertools,heapq,glob,signal
 
 ## Example and Usage:
 
-### 1. Generated annotation files 
-1.1 download files for annotation (required): 
+### 1. Generate annotation files (required)
+1.1 download files for annotation (required, using hg38 as example): 
 * ``` wget https://ftp.ncbi.nlm.nih.gov/refseq/H_sapiens/annotation/annotation_releases/109.20190905/GCF_000001405.39_GRCh38.p13/GCF_000001405.39_GRCh38.p13_assembly_report.txt ```
 * ``` wget https://ftp.ncbi.nlm.nih.gov/refseq/H_sapiens/annotation/annotation_releases/109.20190905/GCF_000001405.39_GRCh38.p13/GCF_000001405.39_GRCh38.p13_genomic.gtf.gz ```
 
-1.2 Unify chromosome naming in GTF file and genome file:
+1.2 download reference genome and transcriptome
+* ``` wget https://hgdownload.soe.ucsc.edu/goldenPath/hg38/bigZips/hg38.fa.gz ```
+
+* ```wget https://ftp.ncbi.nlm.nih.gov/refseq/H_sapiens/annotation/annotation_releases/109.20190905/GCF_000001405.39_GRCh38.p13/GCF_000001405.39_GRCh38.p13_rna.fna.gz```
+
+1.3 Unify chromosome naming in GTF file and genome file:
  
 * ```python ./get_anno/change_UCSCgtf.py -i GCF_000001405.39_GRCh38.p13_genomic.gtf -j GCF_000001405.39_GRCh38.p13_assembly_report.txt -o GCF_000001405.39_GRCh38.p13_genomic.gtf_change2Ens ```
 
 ### 2. get reference for reads alignment (required)
 
-2.1 download reference genome and transcriptome
-* ```wget https://ftp.ncbi.nlm.nih.gov/refseq/H_sapiens/annotation/annotation_releases/109.20190905/GCF_000001405.39_GRCh38.p13/GCF_000001405.39_GRCh38.p13_genomic.fna.gz```
-* ```wget https://ftp.ncbi.nlm.nih.gov/refseq/H_sapiens/annotation/annotation_releases/109.20190905/GCF_000001405.39_GRCh38.p13/GCF_000001405.39_GRCh38.p13_rna.fna.gz```
+2.1 build genome index using STAR
 
-2.2 get the longest transcript for genes 
+* ``` python ./pipelines/build_genome_index.py -f $genome_fastafile -pre hg38 ```
 
-2.2.1 Get the required annotation table files:
+you will get:
+* $ hg38.rvsCom.fa
+* $ hg38.AG_conversion.fa
+* the corresponding index from STAR
+
+2.2 build transcriptome index using bowtie
+
+2.2.1 get the longest transcript for genes (required)
+
+Get the required annotation table files:
 
 * ```python ./get_anno/gtf2anno.py -i GCF_000001405.39_GRCh38.p13_genomic.gtf_change2Ens -o GCF_000001405.39_GRCh38.p13_genomic.gtf_change2Ens.tbl``` 
 
-* ```awk '$3!~/_/&&$3!="na"' GCF_000001405.39_GRCh38.p13_genomic.gtf_change2Ens.tbl | sed '/unknown_transcript_1/d'  > GCF_000001405.39_GRCh38.p13_genomic.gtf_change2Ens.tbl2```
+* ```awk '$3!~/_/&&$3!="na"' GCF_000001405.39_GRCh38.p13_genomic.gtf_change2Ens.tbl | sed '/unknown_transcript/d'  > GCF_000001405.39_GRCh38.p13_genomic.gtf_change2Ens.tbl2```
 
 2.2.2 Get the longest transcript:
 
-* ```python ./get_anno/selected_longest_transcrpts_fa.py -anno GCF_000001405.39_GRCh38.p13_genomic.gtf_change2Ens.tbl2 -fafile GCF_000001405.39_GRCh38.p13_rna.fa --outname_prx GCF_000001405.39_GRCh38.p13_rna2.fa```
+* ``` python ./get_anno/selected_longest_transcrpts_fa.py -anno GCF_000001405.39_GRCh38.p13_genomic.gtf_change2Ens.tbl2 -fafile GCF_000001405.39_GRCh38.p13_rna.fa --outname_prx GCF_000001405.39_GRCh38.p13_rna2.fa```
 
-2.3 build genome index using STAR
+2.2.3 build reference with bowtie
 
-* ```python ./pipelines/build_genome_index.py -f $genome_fafile -pre $output```
+* ```python ./pipelines/build_transcriptome_index.py -f $ GCF_000001405.39_GRCh38.p13_rna2.fa -pre GCF_000001405.39_GRCh38.p13_rna2.fa```
 
 you will get:
-* $output.rvsCom.fa
-* $output.AG_conversion.fa
-* the corresponding index from STAR
-
-2.4 build transcriptome index using bowtie
-
-* ```python ./pipelines/build_transcriptome_index.py -f $ -pre GCF_000001405.39_GRCh38.p13_rna2.fa```
+* $ GCF_000001405.39_GRCh38.p13_rna2.fa.AG_conversion.fa
+* the corresponding index from bowtie
 
 ### 3. get_base annotation (optional)
 
-3.1 get annotation at single-nucleotide resolution
+3.1 get annotation at single-base resolution
 
-* ```python ./get_anno/anno_to_base.py -i GCF_000001405.39_GRCh38.p13_genomic.gtf_change2Ens.tbl2 -o GCF_000001405.39_GRCh38.p13_genomic.gtf_ _change2Ens.tbl2.baseanno```
+* ```python ./get_anno/anno_to_base.py -i GCF_000001405.39_GRCh38.p13_genomic.gtf_change2Ens.tbl2 -o GCF_000001405.39_GRCh38.p13_genomic.gtf_change2Ens.tbl2.baseanno```
 
 3.2 get required annotation file for further removal of duplicated loci
 
@@ -89,42 +96,46 @@ you will get:
 
 * ```python ./get_anno/anno_to_base_remove_redundance_v1.0.py -i GCF_000001405.39_GRCh38.p13_genomic.gtf_change2Ens.tbl2.baseanno -o GCF_000001405.39_GRCh38.p13_genomic.gtf_change2Ens.tbl2.noredundance.base -g GCF_000001405.39_GRCh38.p13_genomic.gtf_change2Ens.genelist2```
 
+Finally, you will get annotation files: 
+* GCF_000001405.39_GRCh38.p13_genomic.gtf_change2Ens.tbl2.noredundance.base
 
 ### 4. alignment and call sites (required)
+
+GLORI-tools takes cleaned reads as input and finally reports files for the conversion rate (A-to-G) of GLORI for each gene and m6A sites at single-base resolution with corresponding A rate representative for modification level. 
+
 ### 4.1 Example shell scripts
 
-|Used files |
+| Used files |
 | :--- |
 | Thread=1 |
 | genomdir=your_dir |
-| genome=${genomdir}/GRh38_only.fa.AG_conversion.fa |
-| genome2=${genomdir}/GRh38_only.fa.AG_conversion.fa |
-| rvsgenome=${genomdir}/GRh38_only_revCom_2.fa |
+| genome=${genomdir}/hg38.AG_conversion.fa |
+| genome2=${genomdir}/hg38.fa |
+| rvsgenome=${genomdir}/hg38.revCom.fa |
 | TfGenome=${genomdir}/GCF_000001405.39_GRCh38.p13_rna2.fa.AG_conversion.fa |
 | annodir=your_dir |
 | baseanno=${annodir}/GCF_000001405.39_GRCh38.p13_genomic.gtf_change2Ens.tbl2.noredundance.base |
 | anno=${annodir}/GCF_000001405.39_GRCh38.p13_genomic.gtf_change2Ens.tbl2 |
 | outputdir=your_dir |
-| tooldir=/yourdir/NS-seq-tools |
-| filedir=your_dir |
+| tooldir=/tool_dir/NS-seq-tools |
 | prx=your_prefix |
-| file=your_trimmed reads | 
+| file=your_cleaned_reads | 
 
 ### 4.2 Call m6A sites annotated the with genes
-* ``` python ${tooldir}/run_GLORI.py -i $tooldir -q ${file} -T $Thread -f ${genome} -f2 ${genome2} -rvs ${rvsgenome} -Tf ${TfGenome} -a $anno -b $baseanno -pre ${prx3} -o $outputdir --combine --rvs_fac```
+
+* ``` python ${tooldir}/run_GLORI.py -i $tooldir -q ${file} -T $Thread -f ${genome} -f2 ${genome2} -rvs ${    rvsgenome} -Tf ${TfGenome} -a $anno -b $baseanno -pre ${prx} -o $outputdir --combine --rvs_fac ```
 
 ### 4.3 Call m6A sites without annotated genes.
 
-* ``` python ${tooldir}/run_GLORI.py -i $tooldir -q ${file} -T $Thread -f ${genome} -f2 ${genome2} -rvs ${rvsgenome} -Tf ${TfGenome} -pre ${prx3} -o $outputdir --combine --rvs_fac ```
+* ``` python ${tooldir}/run_GLORI.py -i $tooldir -q ${file} -T $Thread -f ${genome} -f2 ${genome2} -rvs ${rvsgenome} -Tf ${TfGenome} -a $anno -pre ${prx} -o $outputdir --combine --rvs_fac ```
 
-* In this situation, the background for each m6A sites are the overall conversion rate.
+* In this situation, the background for each m6A sites is the overall conversion rate.
 
 * The site list obtained by the above two methods is basically the similar, and there may be a few differential sites in the list.
 
 ### 4.4 mapping with samples without GLORI treatment
 
-* ```python ${tooldir}/run_GLORI.py -i $tooldir -q ${file} -T $Thread -f ${genome} -rvs ${rvsgenome} -Tf ${TfGenome} -a $anno -b     $baseanno -pre ${prx3} -o $outputdir --combine –untreated ```
-
+* ``` python ${tooldir}/run_GLORI.py -i $tooldir -q ${file} -T $Thread -f ${genome} -rvs ${rvsgenome} -Tf ${TfGenome} -a $anno -pre ${prx} -o $outputdir --combine --untreated ```
 
 ### 5 Resultes:
 ### 5.1 Output files of GLORI
@@ -158,6 +169,7 @@ you will get:
 
 ## Licences
 * Released under MIT license
+
 
 
 
