@@ -1,5 +1,5 @@
 # GLORI-tools v1.0
-###**GLORI-tools currently works, but is still being optimized for a better user experience.**
+**GLORI-tools currently works, but is still being optimized for a better user experience.**
 
 ## Table of content
 * Background
@@ -91,7 +91,8 @@ you will get:
 
 
 ### 4. alignment and call sites (required)
-#### 4.1 Example shell scripts
+### 4.1 Example shell scripts
+
 ``` | Thread=1 |
 | genomdir=your_dir |
 | genome=${genomdir}/GRh38_only.fa.AG_conversion.fa |
@@ -107,29 +108,30 @@ you will get:
 | filedir=your_dir |
 
 | prx=your_prefix |
-| file=your_trimmed reads |
+| file=your_trimmed reads | ```
 
-#### 4.2 call m6A sites annotated the with genes,
+### 4.2 call m6A sites annotated the with genes,
 * ``` python ${tooldir}/run_GLORI.py -i $tooldir -q ${file} -T $Thread -f ${genome} -f2 ${genome2} -rvs ${rvsgenome} -Tf ${TfGenome} -a $anno -b $baseanno -pre ${prx3} -o $outputdir --combine --rvs_fac```
 
-#### 4.3 call m6A sites without annotated genes, in this situation,the background for each m6A sites are the overall conversion rate:
+### 4.3 call m6A sites without annotated genes, in this situation,the background for each m6A sites are the overall conversion rate:
 
 * ``` python ${tooldir}/run_GLORI.py -i $tooldir -q ${file} -T $Thread -f ${genome} -f2 ${genome2} -rvs ${rvsgenome} -Tf ${TfGenome} -pre ${prx3} -o $outputdir --combine --rvs_fac ```
 
 * The site list obtained by the above two methods is basically the similar, and there may be a few differential sites in the list.
 
-#### 4.4 mapping with samples without GLORI treatment
+### 4.4 mapping with samples without GLORI treatment
 
-python ${tooldir}/run_GLORI.py -i $tooldir -q ${file} -T $Thread -f ${genome} -rvs ${rvsgenome} -Tf ${TfGenome} -a $anno -b     $baseanno -pre ${prx3} -o $outputdir --combine --untreated
+* ```python ${tooldir}/run_GLORI.py -i $tooldir -q ${file} -T $Thread -f ${genome} -rvs ${rvsgenome} -Tf ${TfGenome} -a $anno -b     $baseanno -pre ${prx3} -o $outputdir --combine –untreated ```
 
 
 ### 5 Resultes:
-####5.1 Output files of GLORI
+###5.1 Output files of GLORI
+
 | ${your_prefix}_merged.sorted.bam | Overall mapping reads |
 |  ${your_prefix}_referbase.mpi |  miplup files |
 |  ${your_prefix}.totalCR.txt | txt file for the overall conversion rate |
 |  finally sites files  | ${your_prefix}.totalm6A.FDR.csv |
-####5.2 GLORI sites files
+###5.2 GLORI sites files
 | Chr | chromosome |
 | Sites | genomic loci |
 | Strand | strand |
@@ -148,6 +150,7 @@ python ${tooldir}/run_GLORI.py -i $tooldir -q ${file} -T $Thread -f ${genome} -r
 
 ## Licences
 * Released under MIT license
+
 
 
 
