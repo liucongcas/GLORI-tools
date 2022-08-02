@@ -135,7 +135,11 @@ you will get:
 |  ${your_prefix}_referbase.mpi |  miplup files |
 |  ${your_prefix}.totalCR.txt | txt file for the overall conversion rate |
 |  finally sites files  | ${your_prefix}.totalm6A.FDR.csv |
+
 ###5.2 GLORI sites files
+
+| Columns | Interpretation |
+| :--- | ---: |
 | Chr | chromosome |
 | Sites | genomic loci |
 | Strand | strand |
@@ -154,6 +158,7 @@ you will get:
 
 ## Licences
 * Released under MIT license
+
 
 
 
