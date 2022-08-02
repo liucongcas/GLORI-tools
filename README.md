@@ -34,4 +34,4 @@ pysam,pandas,argparse,time,collections,os,sys,re,subprocess,multiprocessing,nump
 ## 2.1 Generated annotation files 
 1) download files for annotation (required): 
 * '<wget https://ftp.ncbi.nlm.nih.gov/refseq/H_sapiens/annotation/annotation_releases/109.20190905/GCF_000001405.39_GRCh38.p13/GCF_000001405.39_GRCh38.p13_assembly_report.txt>'
-* '''python xx.py'''
+* ```python xx.py```
