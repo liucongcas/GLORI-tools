@@ -93,7 +93,10 @@ you will get:
 ### 4. alignment and call sites (required)
 ### 4.1 Example shell scripts
 
-``` | Thread=1 |
+```
+| files |
+| :--- |
+ | Thread=1 |
 | genomdir=your_dir |
 | genome=${genomdir}/GRh38_only.fa.AG_conversion.fa |
 | genome2=${genomdir}/GRh38_only.fa.AG_conversion.fa |
@@ -150,6 +153,7 @@ you will get:
 
 ## Licences
 * Released under MIT license
+
 
 
 
