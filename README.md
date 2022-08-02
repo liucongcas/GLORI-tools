@@ -93,7 +93,6 @@ you will get:
 ### 4. alignment and call sites (required)
 ### 4.1 Example shell scripts
 
-```
 | files |
 | :--- |
  | Thread=1 |
@@ -102,16 +101,14 @@ you will get:
 | genome2=${genomdir}/GRh38_only.fa.AG_conversion.fa |
 | rvsgenome=${genomdir}/GRh38_only_revCom_2.fa |
 | TfGenome=${genomdir}/GCF_000001405.39_GRCh38.p13_rna2.fa.AG_conversion.fa |
-
 | annodir=your_dir |
 | baseanno=${annodir}/GCF_000001405.39_GRCh38.p13_genomic.gtf_change2Ens.tbl2.noredundance.base |
 | anno=${annodir}/GCF_000001405.39_GRCh38.p13_genomic.gtf_change2Ens.tbl2 |
 | outputdir=your_dir |
 | tooldir=/yourdir/NS-seq-tools |
 | filedir=your_dir |
-
 | prx=your_prefix |
-| file=your_trimmed reads | ```
+| file=your_trimmed reads |
 
 ### 4.2 call m6A sites annotated the with genes,
 * ``` python ${tooldir}/run_GLORI.py -i $tooldir -q ${file} -T $Thread -f ${genome} -f2 ${genome2} -rvs ${rvsgenome} -Tf ${TfGenome} -a $anno -b $baseanno -pre ${prx3} -o $outputdir --combine --rvs_fac```
