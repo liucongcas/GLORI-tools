@@ -93,9 +93,9 @@ you will get:
 ### 4. alignment and call sites (required)
 ### 4.1 Example shell scripts
 
-| files |
+|Used files |
 | :--- |
- | Thread=1 |
+| Thread=1 |
 | genomdir=your_dir |
 | genome=${genomdir}/GRh38_only.fa.AG_conversion.fa |
 | genome2=${genomdir}/GRh38_only.fa.AG_conversion.fa |
@@ -108,14 +108,16 @@ you will get:
 | tooldir=/yourdir/NS-seq-tools |
 | filedir=your_dir |
 | prx=your_prefix |
-| file=your_trimmed reads |
+| file=your_trimmed reads | 
 
-### 4.2 call m6A sites annotated the with genes,
+### 4.2 Call m6A sites annotated the with genes
 * ``` python ${tooldir}/run_GLORI.py -i $tooldir -q ${file} -T $Thread -f ${genome} -f2 ${genome2} -rvs ${rvsgenome} -Tf ${TfGenome} -a $anno -b $baseanno -pre ${prx3} -o $outputdir --combine --rvs_fac```
 
-### 4.3 call m6A sites without annotated genes, in this situation,the background for each m6A sites are the overall conversion rate:
+### 4.3 Call m6A sites without annotated genes.
 
 * ``` python ${tooldir}/run_GLORI.py -i $tooldir -q ${file} -T $Thread -f ${genome} -f2 ${genome2} -rvs ${rvsgenome} -Tf ${TfGenome} -pre ${prx3} -o $outputdir --combine --rvs_fac ```
+
+* In this situation, the background for each m6A sites are the overall conversion rate.
 
 * The site list obtained by the above two methods is basically the similar, and there may be a few differential sites in the list.
 
@@ -127,6 +129,8 @@ you will get:
 ### 5 Resultes:
 ###5.1 Output files of GLORI
 
+| Output files | Interpretation |
+| :--- | ---: |
 | ${your_prefix}_merged.sorted.bam | Overall mapping reads |
 |  ${your_prefix}_referbase.mpi |  miplup files |
 |  ${your_prefix}.totalCR.txt | txt file for the overall conversion rate |
