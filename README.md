@@ -1,11 +1,11 @@
-Table of Contents
+# GLORI-tools: bioinformatics pipeline for GLORI
 
-# Background
-# Install
-# Usage
-# Examples
-# Maintainers and Contributing
-# License
+* Background
+* Install
+* Usage
+* Examples
+* Maintainers and Contributing
+* License
 
 # Background
 ## GLORI
