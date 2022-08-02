@@ -127,19 +127,19 @@ you will get:
 
 
 ### 5 Resultes:
-###5.1 Output files of GLORI
+### 5.1 Output files of GLORI
 
 | Output files | Interpretation |
-| :--- | :---: |
+| :---: | :---: |
 | ${your_prefix}_merged.sorted.bam | Overall mapping reads |
 |  ${your_prefix}_referbase.mpi |  miplup files |
 |  ${your_prefix}.totalCR.txt | txt file for the overall conversion rate |
 |  finally sites files  | ${your_prefix}.totalm6A.FDR.csv |
 
-###5.2 GLORI sites files
+### 5.2 GLORI sites files
 
 | Columns | Interpretation |
-| :--- | :---: |
+| :---: | :---: |
 | Chr | chromosome |
 | Sites | genomic loci |
 | Strand | strand |
@@ -158,6 +158,7 @@ you will get:
 
 ## Licences
 * Released under MIT license
+
 
 
 
