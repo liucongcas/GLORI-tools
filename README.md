@@ -53,11 +53,11 @@ Get the required annotation table files:
 
 * ```awk '$3!~/_/&&$3!="na"' GCF_000001405.39_GRCh38.p13_genomic.gtf_change2Ens.tbl | sed '/unknown_transcript_1/d'  > GCF_000001405.39_GRCh38.p13_genomic.gtf_change2Ens.tbl2```
 
-Getting the longest transcript:
+Get the longest transcript:
 
 * ```python ./get_anno/selected_longest_transcrpts_fa.py -anno GCF_000001405.39_GRCh38.p13_genomic.gtf_change2Ens.tbl2 -fafile GCF_000001405.39_GRCh38.p13_rna.fa --outname_prx GCF_000001405.39_GRCh38.p13_rna2.fa```
 
-2.2.3 building genome index using STAR
+2.2.3 build genome index using STAR
 
 * ```python ./pipelines/build_genome_index.py -f $genome_fafile -pre $output```
 
@@ -66,7 +66,7 @@ you will get:
 * $output.AG_conversion.fa
 * the corresponding index from STAR
 
-2.2.4 building transcriptome index using bowtie
+2.2.4 build transcriptome index using bowtie
 
 * ```python ./pipelines/build_transcriptome_index.py -f $ -pre GCF_000001405.39_GRCh38.p13_rna2.fa```
 
@@ -87,7 +87,7 @@ you will get:
 * ```python ./get_anno/anno_to_base_remove_redundance_v1.0.py -i GCF_000001405.39_GRCh38.p13_genomic.gtf_change2Ens.tbl2.baseanno -o GCF_000001405.39_GRCh38.p13_genomic.gtf_change2Ens.tbl2.noredundance.base -g GCF_000001405.39_GRCh38.p13_genomic.gtf_change2Ens.genelist2```
 
 
-5 mapping and callsites (required)
+5 alignment and call sites (required)
 
 
 Thread=1
