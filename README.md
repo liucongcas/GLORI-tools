@@ -36,8 +36,9 @@ pysam,pandas,argparse,time,collections,os,sys,re,subprocess,multiprocessing,nump
 * ``` wget https://ftp.ncbi.nlm.nih.gov/refseq/H_sapiens/annotation/annotation_releases/109.20190905/GCF_000001405.39_GRCh38.p13/GCF_000001405.39_GRCh38.p13_assembly_report.txt ```
 * ``` wget https://ftp.ncbi.nlm.nih.gov/refseq/H_sapiens/annotation/annotation_releases/109.20190905/GCF_000001405.39_GRCh38.p13/GCF_000001405.39_GRCh38.p13_genomic.gtf.gz ```
 
-2.1.2 Unify chromosome naming in GTF file and genome file: 
-```python ./get_anno/change_UCSCgtf.py -i GCF_000001405.39_GRCh38.p13_genomic.gtf -j GCF_000001405.39_GRCh38.p13_assembly_report.txt -o GCF_000001405.39_GRCh38.p13_genomic.gtf_change2Ens ```
+2.1.2 Unify chromosome naming in GTF file and genome file:
+ 
+* ```python ./get_anno/change_UCSCgtf.py -i GCF_000001405.39_GRCh38.p13_genomic.gtf -j GCF_000001405.39_GRCh38.p13_assembly_report.txt -o GCF_000001405.39_GRCh38.p13_genomic.gtf_change2Ens ```
 
 ### 2.2 getting reference for mapping (required)
 2.2.1 download reference genome and transcriptome
@@ -50,7 +51,7 @@ Get the required annotation table files:
 
 * ```python ./get_anno/gtf2anno.py -i GCF_000001405.39_GRCh38.p13_genomic.gtf_change2Ens -o GCF_000001405.39_GRCh38.p13_genomic.gtf_change2Ens.tbl``` 
 
-* ```awk '$3!~/_/&&$3!="na"' GCF_000001405.39_GRCh38.p13_genomic.gtf_change2Ens.tbl | * ```sed '/unknown_transcript_1/d'  > GCF_000001405.39_GRCh38.p13_genomic.gtf_change2Ens.tbl2```
+* ```awk '$3!~/_/&&$3!="na"' GCF_000001405.39_GRCh38.p13_genomic.gtf_change2Ens.tbl | sed '/unknown_transcript_1/d'  > GCF_000001405.39_GRCh38.p13_genomic.gtf_change2Ens.tbl2```
 
 Getting the longest transcript:
 
@@ -71,16 +72,18 @@ you will get:
 
 ### 2.3 get_base annotation (optional)
 
-2.3.1 
+2.3.1 get annotation at single-nucleotide resolution
+
 * ```python ./get_anno/anno_to_base.py -i GCF_000001405.39_GRCh38.p13_genomic.gtf_change2Ens.tbl2 -o GCF_000001405.39_GRCh38.p13_genomic.gtf_ _change2Ens.tbl2.baseanno```
 
-2.3.2 
+2.3.2 get required annotation file for further removal of duplicated loci
+
 * ``` python ./get_anno/gtf2genelist.py -i GCF_000001405.39_GRCh38.p13_genomic.gtf_change2Ens -f GCF_000001405.39_GRCh38.p13_rna.fa -o GCF_000001405.39_GRCh38.p13_genomic.gtf_change2Ens.genelist > output2```
 
-2.3.3 
 * ```awk '$6!~/_/&&$6!="na"' GCF_000001405.39_GRCh38.p13_genomic.gtf_change2Ens.genelist > GCF_000001405.39_GRCh38.p13_genomic.gtf_change2Ens.genelist2```
 
-2.3.4 
+2.3.4 Removal of duplicated loci in the annotation file
+
 * ```python ./get_anno/anno_to_base_remove_redundance_v1.0.py -i GCF_000001405.39_GRCh38.p13_genomic.gtf_change2Ens.tbl2.baseanno -o GCF_000001405.39_GRCh38.p13_genomic.gtf_change2Ens.tbl2.noredundance.base -g GCF_000001405.39_GRCh38.p13_genomic.gtf_change2Ens.genelist2```
 
 
@@ -148,6 +151,7 @@ P_adjust: FDR ajusted P value
 
 # Licences
 * Released under MIT license
+
 
 
 
