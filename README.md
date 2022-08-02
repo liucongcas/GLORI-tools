@@ -36,16 +36,16 @@ pysam,pandas,argparse,time,collections,os,sys,re,subprocess,multiprocessing,nump
 * ``` wget https://ftp.ncbi.nlm.nih.gov/refseq/H_sapiens/annotation/annotation_releases/109.20190905/GCF_000001405.39_GRCh38.p13/GCF_000001405.39_GRCh38.p13_assembly_report.txt ```
 * ``` wget https://ftp.ncbi.nlm.nih.gov/refseq/H_sapiens/annotation/annotation_releases/109.20190905/GCF_000001405.39_GRCh38.p13/GCF_000001405.39_GRCh38.p13_genomic.gtf.gz ```
 2.1.2 Unify chromosome naming in GTF file and genome file: 
-* 1) ```python ./get_anno/change_UCSCgtf.py -i GCF_000001405.39_GRCh38.p13_genomic.gtf -j GCF_000001405.39_GRCh38.p13_assembly_report.txt -o GCF_000001405.39_GRCh38.p13_genomic.gtf_change2Ens ```
+```python ./get_anno/change_UCSCgtf.py -i GCF_000001405.39_GRCh38.p13_genomic.gtf -j GCF_000001405.39_GRCh38.p13_assembly_report.txt -o GCF_000001405.39_GRCh38.p13_genomic.gtf_change2Ens ```
 
 ### 2.2 getting reference for mapping (required)
 2.2.1 download reference genome and transcriptome
 * ```wget https://ftp.ncbi.nlm.nih.gov/refseq/H_sapiens/annotation/annotation_releases/109.20190905/GCF_000001405.39_GRCh38.p13/GCF_000001405.39_GRCh38.p13_genomic.fna.gz```
 * ```wget https://ftp.ncbi.nlm.nih.gov/refseq/H_sapiens/annotation/annotation_releases/109.20190905/GCF_000001405.39_GRCh38.p13/GCF_000001405.39_GRCh38.p13_rna.fna.gz```
 2.2.2 getting the longest transcript by gene from Refseq
-* Get_required annotation table files:
-```python ./get_anno/gtf2anno.py -i GCF_000001405.39_GRCh38.p13_genomic.gtf_change2Ens -o GCF_000001405.39_GRCh38.p13_genomic.gtf_change2Ens.tbl 
-awk '$3!~/_/&&$3!="na"' GCF_000001405.39_GRCh38.p13_genomic.gtf_change2Ens.tbl | sed '/unknown_transcript_1/d'  > GCF_000001405.39_GRCh38.p13_genomic.gtf_change2Ens.tbl2```
+* Get the required annotation table files:
+```python ./get_anno/gtf2anno.py -i GCF_000001405.39_GRCh38.p13_genomic.gtf_change2Ens -o GCF_000001405.39_GRCh38.p13_genomic.gtf_change2Ens.tbl``` 
+```awk '$3!~/_/&&$3!="na"' GCF_000001405.39_GRCh38.p13_genomic.gtf_change2Ens.tbl | sed '/unknown_transcript_1/d'  > GCF_000001405.39_GRCh38.p13_genomic.gtf_change2Ens.tbl2```
 * Getting the longest transcript:
 ```python ./get_anno/selected_longest_transcrpts_fa.py -anno GCF_000001405.39_GRCh38.p13_genomic.gtf_change2Ens.tbl2 -fafile GCF_000001405.39_GRCh38.p13_rna.fa --outname_prx GCF_000001405.39_GRCh38.p13_rna2.fa```
 2.2.3 building genome index using STAR
@@ -66,5 +66,72 @@ you will get:
 2.3.3 * awk '$6!~/_/&&$6!="na"' GCF_000001405.39_GRCh38.p13_genomic.gtf_change2Ens.genelist > GCF_000001405.39_GRCh38.p13_genomic.gtf_change2Ens.genelist2
 
 2.3.4 * python ./get_anno/anno_to_base_remove_redundance_v1.0.py -i GCF_000001405.39_GRCh38.p13_genomic.gtf_change2Ens.tbl2.baseanno -o GCF_000001405.39_GRCh38.p13_genomic.gtf_change2Ens.tbl2.noredundance.base -g GCF_000001405.39_GRCh38.p13_genomic.gtf_change2Ens.genelist2
+
+
+5 mapping and callsites (required)
+
+
+Thread=1
+genomdir=your_dir
+genome=${genomdir}/GRh38_only.fa.AG_conversion.fa
+genome2=${genomdir}/GRh38_only.fa.AG_conversion.fa
+rvsgenome=${genomdir}/GRh38_only_revCom_2.fa
+TfGenome=${genomdir}/GCF_000001405.39_GRCh38.p13_rna2.fa.AG_conversion.fa
+
+annodir=your_dir
+baseanno=${annodir}/GCF_000001405.39_GRCh38.p13_genomic.gtf_change2Ens.tbl2.noredundance.base
+anno=${annodir}/GCF_000001405.39_GRCh38.p13_genomic.gtf_change2Ens.tbl2
+outputdir=your_dir
+tooldir=/yourdir/NS-seq-tools
+filedir=your_dir
+
+prx=your_prefix
+file=your_trimmed reads
+
+1) call m6A sites annotated the with genes,
+
+python ${tooldir}/run_GLORI.py -i $tooldir -q ${file} -T $Thread -f ${genome} -f2 ${genome2} -rvs ${rvsgenome} -Tf ${TfGenome} -a $anno -b $baseanno -pre ${prx3} -o $outputdir --combine --rvs_fac
+
+2) call m6A sites without annotated genes, in this situation,the background for each m6A sites are the overall conversion rate:
+
+python ${tooldir}/run_GLORI.py -i $tooldir -q ${file} -T $Thread -f ${genome} -f2 ${genome2} -rvs ${rvsgenome} -Tf ${TfGenome} -pre ${prx3} -o $outputdir --combine --rvs_fac
+
+The site list obtained by the above two methods is basically the similiar, and there may be a few differential sites in the list.
+
+3) mapping with samples without GLORI treatment
+
+python ${tooldir}/run_GLORI.py -i $tooldir -q ${file} -T $Thread -f ${genome} -rvs ${rvsgenome} -Tf ${TfGenome} -a $anno -b     $baseanno -pre ${prx3} -o $outputdir --combine --untreated
+
+
+6 resultes:
+
+1 ${your_prefix}_merged.sorted.bam
+Overall mapping reads
+2 ${your_prefix}_referbase.mpi
+miplup files
+3 ${your_prefix}.totalCR.txt
+txt file for the overall conversion rate
+4 finally sites files
+${your_prefix}.totalm6A.FDR.csv
+Chr: chromosome
+Sites: genomic loci
+Strand: strand
+Gene: annotated gene
+CR: conversion rate for genes
+AGcov: reads coverage with A and G
+Acov: reads coverage with A
+Genecov: mean coverage for the whole gene
+Ratio: A rate for the sites/ or methylation level for the sites
+Pvalue: test for A rate based on the background
+P_adjust: FDR ajusted P value
+
+
+# Maintainers and Contributing
+* GLORI-tools is developed and maintained by Cong Liu (liucong-1112@pku.edu.cn).
+* The development of GLORI-tools is inseparable from the open source software RNA-m5C (https://github.com/SYSU-zhanglab/RNA-m5C).
+
+# Licences
+* Released under MIT license
+
 
 
