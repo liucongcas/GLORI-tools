@@ -34,7 +34,7 @@ pysam,pandas,argparse,time,collections,os,sys,re,subprocess,multiprocessing,copy
 ## Example and Usage:
 
 ### 1. Generate annotation files (required)
-1.1 download files for annotation (required, using hg38 as example): 
+#### 1.1 download files for annotation (required, using hg38 as example): 
 * ``` wget https://ftp.ncbi.nlm.nih.gov/refseq/H_sapiens/annotation/annotation_releases/109.20190905/GCF_000001405.39_GRCh38.p13/GCF_000001405.39_GRCh38.p13_assembly_report.txt ```
 * ``` wget https://ftp.ncbi.nlm.nih.gov/refseq/H_sapiens/annotation/annotation_releases/109.20190905/GCF_000001405.39_GRCh38.p13/GCF_000001405.39_GRCh38.p13_genomic.gtf.gz ```
 
