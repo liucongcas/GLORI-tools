@@ -117,7 +117,7 @@ GLORI-tools takes cleaned reads as input and finally reports files for the conve
 | baseanno=${annodir}/GCF_000001405.39_GRCh38.p13_genomic.gtf_change2Ens.tbl2.noredundance.base |
 | anno=${annodir}/GCF_000001405.39_GRCh38.p13_genomic.gtf_change2Ens.tbl2 |
 | outputdir=your_dir |
-| tooldir=/tool_dir/NS-seq-tools |
+| tooldir=/tool_dir/GLORI -tools |
 | prx=your_prefix |
 | file=your_cleaned_reads | 
 
