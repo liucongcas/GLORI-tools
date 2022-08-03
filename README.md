@@ -123,7 +123,7 @@ GLORI-tools takes cleaned reads as input and finally reports files for the conve
 
 #### 4.2 Call m6A sites annotated the with genes
 
-* ``` python ${tooldir}/run_GLORI.py -i $tooldir -q ${file} -T $Thread -f ${genome} -f2 ${genome2} -rvs ${    rvsgenome} -Tf ${TfGenome} -a $anno -b $baseanno -pre ${prx} -o $outputdir --combine --rvs_fac ```
+* ``` python ${tooldir}/run_GLORI.py -i $tooldir -q ${file} -T $Thread -f ${genome} -f2 ${genome2} -rvs ${rvsgenome} -Tf ${TfGenome} -a $anno -b $baseanno -pre ${prx} -o $outputdir --combine --rvs_fac ```
 
 #### 4.3 Call m6A sites without annotated genes.
 
@@ -169,6 +169,7 @@ GLORI-tools takes cleaned reads as input and finally reports files for the conve
 
 ## Licences
 * Released under MIT license
+
 
 
 
