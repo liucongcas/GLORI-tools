@@ -68,11 +68,11 @@ Get the required annotation table files:
 
 * ```awk '$3!~/_/&&$3!="na"' GCF_000001405.39_GRCh38.p13_genomic.gtf_change2Ens.tbl | sed '/unknown_transcript/d'  > GCF_000001405.39_GRCh38.p13_genomic.gtf_change2Ens.tbl2```
 
-2.2.2 Get the longest transcript:
+Get the longest transcript:
 
 * ``` python ./get_anno/selected_longest_transcrpts_fa.py -anno GCF_000001405.39_GRCh38.p13_genomic.gtf_change2Ens.tbl2 -fafile GCF_000001405.39_GRCh38.p13_rna.fa --outname_prx GCF_000001405.39_GRCh38.p13_rna2.fa```
 
-2.2.3 build reference with bowtie
+2.2.2 build reference with bowtie
 
 * ```python ./pipelines/build_transcriptome_index.py -f $ GCF_000001405.39_GRCh38.p13_rna2.fa -pre GCF_000001405.39_GRCh38.p13_rna2.fa```
 
@@ -169,11 +169,6 @@ GLORI-tools takes cleaned reads as input and finally reports files for the conve
 
 ## Licences
 * Released under MIT license
-
-
-
-
-
 
 
 
