@@ -38,18 +38,18 @@ pysam,pandas,argparse,time,collections,os,sys,re,subprocess,multiprocessing,copy
 * ``` wget https://ftp.ncbi.nlm.nih.gov/refseq/H_sapiens/annotation/annotation_releases/109.20190905/GCF_000001405.39_GRCh38.p13/GCF_000001405.39_GRCh38.p13_assembly_report.txt ```
 * ``` wget https://ftp.ncbi.nlm.nih.gov/refseq/H_sapiens/annotation/annotation_releases/109.20190905/GCF_000001405.39_GRCh38.p13/GCF_000001405.39_GRCh38.p13_genomic.gtf.gz ```
 
-1.2 download reference genome and transcriptome
+#### 1.2 download reference genome and transcriptome
 * ``` wget https://hgdownload.soe.ucsc.edu/goldenPath/hg38/bigZips/hg38.fa.gz ```
 
 * ```wget https://ftp.ncbi.nlm.nih.gov/refseq/H_sapiens/annotation/annotation_releases/109.20190905/GCF_000001405.39_GRCh38.p13/GCF_000001405.39_GRCh38.p13_rna.fna.gz```
 
-1.3 Unify chromosome naming in GTF file and genome file:
+#### 1.3 Unify chromosome naming in GTF file and genome file:
  
 * ```python ./get_anno/change_UCSCgtf.py -i GCF_000001405.39_GRCh38.p13_genomic.gtf -j GCF_000001405.39_GRCh38.p13_assembly_report.txt -o GCF_000001405.39_GRCh38.p13_genomic.gtf_change2Ens ```
 
 ### 2. get reference for reads alignment (required)
 
-2.1 build genome index using STAR
+#### 2.1 build genome index using STAR
 
 * ``` python ./pipelines/build_genome_index.py -f $genome_fastafile -pre hg38 ```
 
@@ -58,7 +58,7 @@ you will get:
 * $ hg38.AG_conversion.fa
 * the corresponding index from STAR
 
-2.2 build transcriptome index using bowtie
+#### 2.2 build transcriptome index using bowtie
 
 2.2.1 get the longest transcript for genes (required)
 
@@ -82,17 +82,17 @@ you will get:
 
 ### 3. get_base annotation (optional)
 
-3.1 get annotation at single-base resolution
+#### 3.1 get annotation at single-base resolution
 
 * ```python ./get_anno/anno_to_base.py -i GCF_000001405.39_GRCh38.p13_genomic.gtf_change2Ens.tbl2 -o GCF_000001405.39_GRCh38.p13_genomic.gtf_change2Ens.tbl2.baseanno```
 
-3.2 get required annotation file for further removal of duplicated loci
+#### 3.2 get required annotation file for further removal of duplicated loci
 
 * ``` python ./get_anno/gtf2genelist.py -i GCF_000001405.39_GRCh38.p13_genomic.gtf_change2Ens -f GCF_000001405.39_GRCh38.p13_rna.fa -o GCF_000001405.39_GRCh38.p13_genomic.gtf_change2Ens.genelist > output2```
 
 * ```awk '$6!~/_/&&$6!="na"' GCF_000001405.39_GRCh38.p13_genomic.gtf_change2Ens.genelist > GCF_000001405.39_GRCh38.p13_genomic.gtf_change2Ens.genelist2```
 
-3.3 Removal of duplicated loci in the annotation file
+#### 3.3 Removal of duplicated loci in the annotation file
 
 * ```python ./get_anno/anno_to_base_remove_redundance_v1.0.py -i GCF_000001405.39_GRCh38.p13_genomic.gtf_change2Ens.tbl2.baseanno -o GCF_000001405.39_GRCh38.p13_genomic.gtf_change2Ens.tbl2.noredundance.base -g GCF_000001405.39_GRCh38.p13_genomic.gtf_change2Ens.genelist2```
 
@@ -103,7 +103,7 @@ Finally, you will get annotation files:
 
 GLORI-tools takes cleaned reads as input and finally reports files for the conversion rate (A-to-G) of GLORI for each gene and m6A sites at single-base resolution with corresponding A rate representative for modification level. 
 
-### 4.1 Example shell scripts
+#### 4.1 Example shell scripts
 
 | Used files |
 | :--- |
@@ -121,11 +121,11 @@ GLORI-tools takes cleaned reads as input and finally reports files for the conve
 | prx=your_prefix |
 | file=your_cleaned_reads | 
 
-### 4.2 Call m6A sites annotated the with genes
+#### 4.2 Call m6A sites annotated the with genes
 
 * ``` python ${tooldir}/run_GLORI.py -i $tooldir -q ${file} -T $Thread -f ${genome} -f2 ${genome2} -rvs ${    rvsgenome} -Tf ${TfGenome} -a $anno -b $baseanno -pre ${prx} -o $outputdir --combine --rvs_fac ```
 
-### 4.3 Call m6A sites without annotated genes.
+#### 4.3 Call m6A sites without annotated genes.
 
 * ``` python ${tooldir}/run_GLORI.py -i $tooldir -q ${file} -T $Thread -f ${genome} -f2 ${genome2} -rvs ${rvsgenome} -Tf ${TfGenome} -a $anno -pre ${prx} -o $outputdir --combine --rvs_fac ```
 
@@ -133,12 +133,12 @@ GLORI-tools takes cleaned reads as input and finally reports files for the conve
 
 * The site list obtained by the above two methods is basically the similar, and there may be a few differential sites in the list.
 
-### 4.4 mapping with samples without GLORI treatment
+#### 4.4 mapping with samples without GLORI treatment
 
 * ``` python ${tooldir}/run_GLORI.py -i $tooldir -q ${file} -T $Thread -f ${genome} -rvs ${rvsgenome} -Tf ${TfGenome} -a $anno -pre ${prx} -o $outputdir --combine --untreated ```
 
 ### 5 Resultes:
-### 5.1 Output files of GLORI
+#### 5.1 Output files of GLORI
 
 | Output files | Interpretation |
 | :---: | :---: |
@@ -147,7 +147,7 @@ GLORI-tools takes cleaned reads as input and finally reports files for the conve
 |  ${your_prefix}.totalCR.txt | txt file for the overall conversion rate |
 |  finally sites files  | ${your_prefix}.totalm6A.FDR.csv |
 
-### 5.2 GLORI sites files
+#### 5.2 GLORI sites files
 
 | Columns | Interpretation |
 | :---: | :---: |
