@@ -25,7 +25,7 @@ parser.add_argument("-p", "--Threads", nargs="?", type=str, default='1', help = 
 parser.add_argument("-f", "--reference", nargs="?", type=str, default=sys.stdin, help = "indexfile")
 parser.add_argument("-rvs", "--rvsref", nargs="?", type=str, default=sys.stdin, help = "transcriptom reference indexfile")
 parser.add_argument("-Tf", "--transref", nargs="?", type=str, default=sys.stdin, help = "transcriptom reference indexfile")
-parser.add_argument("-t", "--tools", nargs="?", type=str, default=sys.stdin, help="bowtie,bowtie2,bwa,hisat2,STAR")
+parser.add_argument("-t", "--tools", nargs="?", type=str, default=sys.stdin, help="bowtie,STAR")
 parser.add_argument("-m", "--mismatch", nargs="?", type=int, default=2, help="mapping mismatch")
 parser.add_argument("-F", "--FilterN", nargs="?", type=str, default=0.5, help="MinOverLread")
 parser.add_argument("-mulMax", "--mulMax", nargs="?", type=int, default=1, help="suppress all alignments if > <int> exist")
@@ -53,19 +53,6 @@ mulMax = args.mulMax
 outputdir = args.outputdir
 outname_prx = args.outname_prefix
 
-
-def check_reads_reference(fastq,reference):
-    if re.search('_1.fq',fastq) or re.search('_1.fastq',fastq):
-        if re.search('AG_conversion',reference):
-            print("Erro: The fastq file and reference do not match ")
-            os._exit(0)
-    elif re.search('_2.fq',fastq) or re.search('_2.fastq',fastq):
-        if re.search('TC_conversion',reference):
-            print("Erro: The fastq file and reference do not match ")
-            os._exit(0)
-    else:
-        print("Erro: fastq file with incorrect naming format")
-        os._exit(0)
 
 re_digits = re.compile(r'(\d+)')
 
@@ -169,21 +156,6 @@ def mapping_files(tool,fastq,reference,Threads,muta_N,fqname,outputdir,mulMax,fl
             command = para_0+para_A+para_B+para_C+para_unmap+para_end
             print(command)
             subprocess.call(command,shell=True)
-    elif tool == "bowtie_multi":
-        if args.local:
-            print("Erro: bowtie do not support --local parameter")
-            os._exit(0)
-        else:
-            para_0 = 'bowtie -k 10 -m '+ str(mulMax)
-            para_A = ' -v '+ str(muta_N)
-            para_B = ' --best --strata -p ' + Threads
-            para_C = ' -x '+ reference +" "+ fastq +' -S ' + outputfile
-            para_unmap = ' --un ' + unmapfastq
-            para_end = ' 2>' + outputfile +'.output'
-            command = para_0+para_A+para_B+para_C+para_unmap+para_end
-            print(command)
-            subprocess.call(command,shell=True)
-
     elif tool == "STAR":
         para_0 = "STAR --runThreadN "+ Threads
         para_g = " --genomeDir "+ reference[:-3]
@@ -204,21 +176,6 @@ def mapping_files(tool,fastq,reference,Threads,muta_N,fqname,outputdir,mulMax,fl
         subprocess.call("samtools view -F " + flag + " -@ " + Threads+" -h " + outputfile[:-3] + 'Aligned.out.sam | samtools sort -n -O SAM > ' + outputfile, shell=True)
         subprocess.call("mv " + outputfile[:-3] + 'Unmapped.out.mate1 ' + unmapfastq, shell=True)
         # subprocess.call("rm -f " + outputfile[:-3] + 'Aligned.out.sam', shell=True)
-
-    elif tool=="bwa":
-        para_0 = "bwa aln -l 1000000 -n "+str(muta_N) +" -t " + Threads
-        para_g = " " + reference + " " + fastq
-        saifile = outputfile[:-3] + 'sai'
-        outx = outputfile[:-3] + 'out'
-        para_o = " > " + saifile + " 2>"+outx
-
-        commond1 = para_0+para_g+para_o
-        print(commond1)
-        subprocess.call(commond1, shell=True)
-        commond2 = "bwa samse -n 1 " + reference + " "+ saifile +" "+ fastq\
-                   + " | awk \'{if($1~/^@/) print $0; else if($12~/XT:A:U/) print $0}\' > "+ outputfile + " 2>"+outx
-        print(commond2)
-        subprocess.call(commond2, shell=True)
     return outputfile,unmapfastq
 
 
@@ -364,7 +321,6 @@ if __name__ == "__main__":
     step = 10000
     global change_fac,fqname2
     change_fac = 'AG'
-    # check_reads_reference(fastq, reference)
     if outname_prx != 'default':
         fqname = outname_prx
     else:
