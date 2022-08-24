@@ -9,7 +9,7 @@ import os, sys
 import argparse
 from collections import defaultdict,Counter
 import time
-from time import gmtime, strftime
+from time import strftime
 import numpy as np
 import math
 import scipy.stats

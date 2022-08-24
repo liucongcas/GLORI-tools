@@ -8,7 +8,6 @@
 import sys
 import os
 import argparse
-import subprocess
 from Bio import SeqIO
 from Bio.Seq import Seq
 from Bio.Seq import reverse_complement

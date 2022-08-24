@@ -11,7 +11,7 @@ import sys,os
 import argparse
 import pysam
 import time
-from time import gmtime, strftime
+from time import strftime
 
 
 def merge_bam(fin,fout):

@@ -187,13 +187,13 @@ def mapping_files(tool,fastq,reference,Threads,muta_N,fqname,outputdir,mulMax,fl
     elif tool == "STAR":
         para_0 = "STAR --runThreadN "+ Threads
         para_g = " --genomeDir "+ reference[:-3]
-        para_A = " --limitOutSJcollapsed 5000000 --alignIntronMax " + str(0)
+        para_A = " --limitOutSJcollapsed 5000000 "
         para_B = " --outFilterMismatchNmax " + str(muta_N)
         # para_B_2 = " --outFilterMismatchNoverLmax 0.3"
         # para_B_3 = " --outFilterMismatchNoverReadLmax 1"
         para_B_2=''
         para_B_3=' --outFilterScoreMinOverLread '+FilterN+' --outFilterMatchNminOverLread '+FilterN+' --seedSearchStartLmax 30 '# increase overall mapping sensitivity
-        para_C = " --outSAMattributes All --outSAMprimaryFlag AllBestScore --outSAMmultNmax 1 "
+        para_C = " --outSAMattributes All --outSAMprimaryFlag AllBestScore --outMultimapperOrder Random --outSAMmultNmax 1 "
         para_D = " --outFilterMultimapNmax " + str(mulMax)
         para_E = " --outFileNamePrefix " + outputfile[:-3] + " --readFilesIn " + fastq
         para_unmap = " --outSAMunmapped Within --outReadsUnmapped Fastx"
@@ -203,7 +203,7 @@ def mapping_files(tool,fastq,reference,Threads,muta_N,fqname,outputdir,mulMax,fl
         print("samtools view -F " + flag + " -@ " + Threads+" -h " + outputfile[:-3] + 'Aligned.out.sam | samtools sort -n -O SAM > ' + outputfile)
         subprocess.call("samtools view -F " + flag + " -@ " + Threads+" -h " + outputfile[:-3] + 'Aligned.out.sam | samtools sort -n -O SAM > ' + outputfile, shell=True)
         subprocess.call("mv " + outputfile[:-3] + 'Unmapped.out.mate1 ' + unmapfastq, shell=True)
-        subprocess.call("rm -f " + outputfile[:-3] + 'Aligned.out.sam', shell=True)
+        # subprocess.call("rm -f " + outputfile[:-3] + 'Aligned.out.sam', shell=True)
 
     elif tool=="bwa":
         para_0 = "bwa aln -l 1000000 -n "+str(muta_N) +" -t " + Threads
