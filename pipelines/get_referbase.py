@@ -2,7 +2,7 @@
 """Feb, 2021"""
 """Email: liucong-1112@pku.edu.cn"""
 """Usage: This program is used to get referbase for mpileup files with ternary genomes"""
-"""Input: [.fastq]"""
+"""Input: [.mpileup]"""
 
 
 import argparse
