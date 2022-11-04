@@ -104,12 +104,12 @@ def build_index(changed_refer,tool,Threads):
 if __name__ == "__main__":
     refername2 = os.path.basename(reference)
     print("**********changing genome ************")
-    # changed_refer = change_reference(reads,reference,outputdir,outname_prx)
+    changed_refer = change_reference(reads,reference,outputdir,outname_prx)
     print("**********reverse complementary genome ************")
-    # rvs_refer = get_reversecom(reference,outputdir+outname_prx)
+    rvs_refer = get_reversecom(reference,outputdir+outname_prx)
     changed_refer = outputdir+"/" + outname_prx + ".AG_conversion.fa"
     print("**********Building genome index for " + changed_refer + " with " + tools + "************")
     build_index(changed_refer,tools,Threads)
     print("**********Building reverse complementary genome index for " + rvs_refer + " with " + tools + "************")
-    # build_index(rvs_refer,tools,Threads)
+    build_index(rvs_refer,tools,Threads)
     print("**********Results will be found in "+outputdir + "************")
