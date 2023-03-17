@@ -51,7 +51,7 @@ pysam,pandas,argparse,time,collections,os,sys,re,subprocess,multiprocessing,copy
 
 #### 2.1 build genome index using STAR
 
-* ``` python ./pipelines/build_genome_index.py -f $genome_fastafile -pre hg38 ```
+* ``` python ./pipelines/build_genome_index.py -f $genome_fastafile -p 20 -pre hg38 ```
 
 you will get:
 * $ hg38.rvsCom.fa
