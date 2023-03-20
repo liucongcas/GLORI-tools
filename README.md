@@ -84,7 +84,7 @@ you will get:
 
 #### 3.1 get annotation at single-base resolution
 
-* ```python ./get_anno/anno_to_base.py -i GCF_000001405.39_GRCh38.p13_genomic.gtf_change2Ens.tbl2 -o GCF_000001405.39_GRCh38.p13_genomic.gtf_change2Ens.tbl2.baseanno```
+* ```python ./get_anno/anno_to_base.py -i GCF_000001405.39_GRCh38.p13_genomic.gtf_change2Ens.tbl2 -threads 20 -o GCF_000001405.39_GRCh38.p13_genomic.gtf_change2Ens.tbl2.baseanno```
 
 #### 3.2 get required annotation file for further removal of duplicated loci
 
