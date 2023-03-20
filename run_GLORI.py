@@ -281,7 +281,7 @@ if __name__ == "__main__":
         # genome = genome.split(".AG_conversion.fa")[0]
         transgenome = transgenome.split(".AG_conversion.fa")[0]
 
-    if anno == 'None':
+    if baseanno == 'None':
         background = 'overall'
     run_command(options.fastq,options.combine,options.untreated,options.rvs_fac,Threads)
 
