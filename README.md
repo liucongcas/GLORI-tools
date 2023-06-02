@@ -15,8 +15,8 @@ GLORI relies on glyoxal and nitrite-mediated deamination of unmethylated adenosi
 
 ## Pre-processing the raw sequencing data
 ### Annotations
-1) GLORI-tools exclusively accepts single-end sequencing reads. Prior to use, it is critical to ensure that the input reads are A-to-G converted reads. Therefore, it is important to carefully verify the orientation of the reads before processing them.
-2）Before inputting data into GLORI-tools, data cleaning is necessary. This involves removing sequencing adapters, low-quality bases, PCR duplicates based on unique molecular identifiers (UMIs), and finally, removing the UMIs themselves.
+* GLORI-tools exclusively accepts single-end sequencing reads. Prior to use, it is critical to ensure that the input reads are A-to-G converted reads. Therefore, it is important to carefully verify the orientation of the reads before processing them.
+* Before inputting data into GLORI-tools, data cleaning is necessary. This involves removing sequencing adapters, low-quality bases, PCR duplicates based on unique molecular identifiers (UMIs), and finally, removing the UMIs themselves.
 ### Installation
 * trim_galore
 * seqkit
