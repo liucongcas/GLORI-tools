@@ -3,6 +3,7 @@
 
 ## Table of content
 * Background
+* Pre-processing the raw sequencing data
 * Installation and Requirement
 * Example and Usage
 * Maintainers and Contributing
