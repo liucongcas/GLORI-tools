@@ -156,7 +156,7 @@ GLORI-tools takes cleaned reads as input and finally reports files for the conve
 
 | Output files | Interpretation |
 | :---: | :---: |
-| ${your_prefix}_merged.sorted.bam | Overall mapping reads |
+| ${your_prefix}_merged.sorted.bam | The overall mapping of reads in .bam format |
 |  ${your_prefix}_referbase.mpi |  miplup files |
 |  ${your_prefix}.totalCR.txt | txt file for the overall conversion rate |
 |  finally sites files  | ${your_prefix}.totalm6A.FDR.csv |
