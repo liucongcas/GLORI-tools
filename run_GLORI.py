@@ -1,4 +1,6 @@
 """Cong Liu Yi_lab, Peking University"""
+import pandas as pd
+
 """Feb, 2021"""
 """Email: liucong-1112@pku.edu.cn"""
 """Usage: This program is used to run GLORI-tools"""
@@ -61,13 +63,13 @@ def run_command(file,combine,untreated,rvs_fac,Threads):
     else:
         if combine and rvs_fac:
             print("**************combine,treated")
-            mapping_command = mapping_1 + " -rvs "+ rvsref +" -Tf "+ transgenome + mapping_2 + " --combine "+ " --rvs_fac"
+            mapping_command = mapping_1 + " -rvs " + rvsref +" -Tf "+ transgenome + mapping_2 + " --combine "+ " --rvs_fac"
             subprocess.call(mapping_command, shell=True)
             print("python "+NStoolsdir+"Transcrip2genome.py --input " + file3 + " --output "+file4 + " --anno "+anno+" --fasta "+genome+" --sort --index")
 
             subprocess.call("python "+NStoolsdir+"Transcrip2genome.py --input " + file3 + " --output "+file4 + " --anno "+anno+" --fasta "+genome+" --sort --index",shell=True)
             subprocess.call("python "+NStoolsdir+"concat_bam.py -i " + file3_2 + " " + file5 + " -o " + file6_2 + " -t " + Threads + " --sort --index ",shell=True)
-            filexx=file6_2[:-4]+'.sorted.bam'
+            filexx = file6_2[:-4]+'.sorted.bam'
             subprocess.call("python "+NStoolsdir+"concat_bam.py -i " + filexx + " " + file6 + " -o " + file7_1 + " -t " + Threads + " --sort --index ",shell=True)
             subprocess.call("rm -f " + filexx+"*", shell=True)
             subprocess.call("rm -f " + outputprefix +"*_un_2.fq", shell=True)
@@ -106,16 +108,16 @@ def run_command(file,combine,untreated,rvs_fac,Threads):
     print("cut -f 1 "+file9 + " | sort -u > " + chr_file)
     subprocess.call("cut -f 1 "+file9 + " | sort -u > " + chr_file, shell=True)
     chr_list = sorted([r1.strip().split("\t")[0] for r1 in open(chr_file).readlines()])
-
-    fac_chr=True
-    index=0
+    #
+    fac_chr = True
+    index = 0
     while fac_chr:
         chr_prx = chr_list[0][:3]
         detected_chr = [i.split('.')[-1]+"_AG_converted" for i in os.listdir(outputdir) if re.search(prx + ".referbase.mpi.formatted.txt." + chr_prx,i) and not re.search('tmp',i)]
         print("*************Detected",detected_chr,len(detected_chr))
         if len(detected_chr) == len(chr_list):
             print(index)
-            fac_chr=False
+            fac_chr = False
             break
         print(index,'lalalalala')
         if index >= 12:
@@ -135,13 +137,31 @@ def run_command(file,combine,untreated,rvs_fac,Threads):
             finally:
                 pool.terminate()
 
-    print("**********optain totalsites***************")
-    # subprocess.call("rm -f " + file9, shell=True)
+    print("**************optain totalsites******************")
+    subprocess.call("rm -f " + file9, shell=True)
     final_sites1 = outputprefix + ".totalm6A.txt"
     final_format = outputprefix + ".totalformat.txt"
+    subprocess.call("cat " + outputprefix + ".referbase.mpi.formatted.txt" + ".* | sed '/#/d' > " + final_format,
+                    shell=True)
+    """Combing A-to-G conversion files"""
+    print("**************Combing A-to-G conversion files******************")
+    pd_CR = pd.DataFrame()
     final_CR = outputprefix + ".totalCR.txt"
-    subprocess.call("cat " + outputprefix + ".referbase.mpi.formatted.txt" + ".* | sed '/#/d' > " + final_format,shell=True)
-    subprocess.call("cat " + outputprefix + ".CR.txt" + ".* > " + final_CR, shell=True)
+    for CR_c in chr_list:
+        chr_x = CR_c.split("_AG_converted")[0]
+        file = outputprefix+".CR.txt."+chr_x
+        CR1 = pd.read_csv(file, sep="\t", names=['SA', 'Totalcovered_reads', 'Remained A reads', 'Non-A-to-G ratio','Mapped_area'])
+        CR2 = CR1[~CR1['SA'].isin(['#ALL', '#90%', '#75%', '#50%', '#25%', '#10%', '#Median', '#Mean'])][['SA', 'Non-A-to-G ratio']]
+        xx_median = CR1[CR1['SA'] == '#Median']['Totalcovered_reads'].values.tolist()
+        pd_median = pd.DataFrame({'SA': ["#Median_"+chr_x], 'Non-A-to-G ratio': xx_median})
+
+        pd_CR_t = pd.concat([pd_median,CR2])
+        pd_CR_t['A-to-G_ratio'] = 1 - pd_CR_t ['Non-A-to-G ratio']
+        pd_x1 = pd_CR_t[['SA', 'A-to-G_ratio']]
+
+        pd_CR = pd.concat([pd_CR, pd_x1])
+    pd_CR.to_csv(final_CR,sep="\t",index=False)
+
     print("cat " + outputprefix + ".callsites" + "*." + str(Acutoffs) + ".txt > " + final_sites1)
     subprocess.call("cat " + outputprefix + ".callsites" + "*." + str(Acutoffs) + ".txt > " + final_sites1, shell=True)
     print("rm -f " + outputprefix + "*." + chr_prx + "* ")
@@ -155,6 +175,7 @@ def run_command(file,combine,untreated,rvs_fac,Threads):
                     + ' -adp ' + adjP, shell=True)
     subprocess.call("rm -f " + final_sites1, shell=True)
 
+
 def get_sites(chr):
     print(chr)
     # time.sleep(1)
@@ -166,7 +187,6 @@ def get_sites(chr):
     file_sites = outputprefix + ".callsites" + "." + chr2
     print("awk \'$1==\"\'\"" + chr + "\"\'\"\' " + file9 + " > " + file_mpi)
     subprocess.call("awk \'$1==\"\'\"" + chr + "\"\'\"\' " + file9 + " > " + file_mpi,shell = True)
-    print("xxx")
     if baseanno != 'None':
         if not os.path.exists(baseanno_chr):
             print("awk \'$1==\"\'\"" + chr2 + "\"\'\"\' " + baseanno + " > " + baseanno_chr)
@@ -186,65 +206,66 @@ def get_sites(chr):
 
 
 if __name__ == "__main__":
-    parser = argparse.ArgumentParser(description="run m6A sites with mRNA")
+    parser = argparse.ArgumentParser(description="GLORI-tools for detecting m6A sites from high-throughput sequencing data")
 
     group_required = parser.add_argument_group("Required")
-    group_required.add_argument("-i", "--NSdir", nargs="?", type=str, default=sys.stdin,help = "NSdir")
+    group_required.add_argument("-i", "--NSdir", nargs="?", type=str, default=sys.stdin,help = "Directory where GLORI-tool is located")
     group_required.add_argument("-q", "--fastq", nargs="?", type=str, default=sys.stdin,
-                        help="fastqfiles with surfix as _1.fq;_1.fastq;_2.fq;_2.fastq")
-    group_required.add_argument("-f", "--reference", nargs="?", type=str, default=sys.stdin, help="index file")
-    group_required.add_argument("-f2", "--reference2", nargs="?", type=str, default=sys.stdin, help="unchanged genome")
-    group_required.add_argument("-rvs", "--rvsref", nargs="?", type=str, default=sys.stdin, help = "transcriptom reference index file")
-    group_required.add_argument("-Tf", "--transref", nargs="?", type=str, default='None',help="transcriptom reference index file")
-    group_required.add_argument("-a", "--anno", nargs="?", type=str, default='None', help="annotation file with exons")
-    group_required.add_argument("--combine", "--combine", help="whether mapping with changed reads",action="store_true")
-    group_required.add_argument("--untreated", "--untreated", help="if the input is untreated",action="store_true")
-    group_required.add_argument("--rvs_fac", "--rvs_fac",help="whether use rvs_fac algrithm", action="store_true")
+                        help="fastq files with surfix as _1.fq;_1.fastq;_2.fq;_2.fastq")
+    group_required.add_argument("-f", "--reference", nargs="?", type=str, default=sys.stdin, help="Index file for the plus strand of the genome")
+    group_required.add_argument("-f2", "--reference2", nargs="?", type=str, default=sys.stdin, help="Index file for the unchanged genome")
+    group_required.add_argument("-rvs", "--rvsref", nargs="?", type=str, default=sys.stdin, help = "Index file for the minus strand of the genome")
+    group_required.add_argument("-Tf", "--transref", nargs="?", type=str, default='None',help="Index file for the minus strand of the transcriptome")
+    group_required.add_argument("-a", "--anno", nargs="?", type=str, default='None', help="Annotation file within exons")
+    group_required.add_argument("--combine", "--combine", help="Whether mapping to transcriptome",action="store_true")
+    group_required.add_argument("--untreated", "--untreated", help="If the input is untreated",action="store_true")
+    group_required.add_argument("--rvs_fac", "--rvs_fac",help="Whether to map to the reverse strand of the transcriptome", action="store_true")
 
 
     group_output = parser.add_argument_group("Output (optional)")
-    group_output.add_argument("-pre", "--outname_prefix", nargs="?", type=str, default='default', help="--outname_prefix")
-    group_output.add_argument("-o", "--outputdir", nargs="?", type=str, default='./', help="outputdir")
+    group_output.add_argument("-pre", "--outname_prefix", nargs="?", type=str, default='default', help="Output file prefix")
+    group_output.add_argument("-o", "--outputdir", nargs="?", type=str, default='./', help="Output directory")
 
 
-    group_mappingfilter = parser.add_argument_group("mapping conditions (optional)")
+    group_mappingfilter = parser.add_argument_group("Mapping conditions (optional)")
 
-
-    group_mappingfilter.add_argument("-b", "--baseanno", nargs="?", type=str, default='None', help="baseanno")
-    group_mappingfilter.add_argument("-t", "--tools", nargs="?", type=str, default='STAR', help="bowtie,STAR")
-    group_mappingfilter.add_argument("-T", "--Threads", nargs="?", type=str, default='1',help="number of alignment threads to launch")
-    group_mappingfilter.add_argument("-mulMax", "--mulMax", nargs="?", type=str, default='1',help="suppress all alignments if > <int> exist")
-    group_mappingfilter.add_argument("-m", "--mismatch", nargs="?", type=str, default='2', help="allowed mapping mismatch")
+    group_mappingfilter.add_argument("-F", "--FilterN", nargs="?", type=str, default=0.5, help="The setting for the STAR parameter --outFilterScoreMinOverLread")
+    group_mappingfilter.add_argument("-b", "--baseanno", nargs="?", type=str, default='None', help="Annotations at single-base resolution")
+    group_mappingfilter.add_argument("-t", "--tools", nargs="?", type=str, default='STAR',  choices=['STAR', 'bowtie'],
+                                     help="We recommend using STAR for genome alignment and Bowtie for transcriptome alignment.")
+    group_mappingfilter.add_argument("-T", "--Threads", nargs="?", type=str, default='1',help="Used threads")
+    group_mappingfilter.add_argument("-mulMax", "--mulMax", nargs="?", type=str, default='1',help="Suppress all alignments if > <int> exist")
+    group_mappingfilter.add_argument("-m", "--mismatch", nargs="?", type=str, default='2', help="Permitted mapping mismatches")
 
     # Filter
     group_site = parser.add_argument_group("m6A filter (optional)")
-    group_site.add_argument("-c", "--coverage", dest="coverage", default='15', type=str, help="A+G coverage, default=10")
-    group_site.add_argument("-C", "--count", dest="count", default='5', type=str,
-                            help="A count, below which the site will not count, default=3")
-    group_site.add_argument("-r", "--ratio", dest="ratio", default='0.1', type=str, help="m6A level/ratio, default=0.1")
-    group_site.add_argument("-p", "--pvalue", dest="pvalue", default='0.005', type=str, help="pvalue, default=0.005")
-    group_site.add_argument("-adp", "--adjustpvalue", dest="adjustpvalue", default='0.005', type=str, help="adjustpvalue, default=0.005")
+    group_site.add_argument("-c", "--coverage", dest="coverage", default='15', type=str, help="A+G coverage")
+    group_site.add_argument("-C", "--count", dest="count", default='5', type=str,help="A coverage")
+    group_site.add_argument("-r", "--ratio", dest="ratio", default='0.1', type=str, help="m6A level or A rate")
+    group_site.add_argument("-p", "--pvalue", dest="pvalue", default='0.005', type=str, help="P-value cutoff for statistical test")
+    group_site.add_argument("-adp", "--adjustpvalue", dest="adjustpvalue", default='0.005', type=str, help="Cutoff for FDR-adjusted p-value")
     group_site.add_argument("-s", "--signal", dest="signal", default='0.8', type=str,
-                            help="signal ratio, equals coverage(under A-cutoff)/coverage, default=0.9")
+                            help="signal ratio, The reads coverage (below the A-cutoff) divided by the total coverage \
+                            is used to exclude false positives located in regions resistant to nitrite treatment")
     group_site.add_argument("-R", "--var_ratio", dest="var_ratio", default='0.8', type=str,
-                            help="the ratio cutoff of AG/Total to filter sequencing/mapping errors, default=0.8")
+                            help="The A+G coverage divided by the total coverage is used to exclude mapping errors")
     group_site.add_argument("-g", "--gene_CR", dest="gene_CR", default='0.2', type=str,
-                            help="conversion rate, over which a gene will be discarded, default=0.1")
+                            help="Any m6A sites within a gene with an A-to-G conversion rate below the cutoff will be discarded")
     group_site.add_argument("-N", "--AG", dest="AG_number", default=0, type=int,
-                            help="AG count, below which a gene will be discarded, default=0")
-    group_site.add_argument("-F", "--FilterN", nargs="?", type=str, default=0.5, help="MinOverLread")
+                            help="Any m6A sites within a gene with an A+G coverage below the cutoff will be discarded")
+
 
     # Statistics
     group_stat = parser.add_argument_group("Statistic method (optional)")
-    group_stat.add_argument("--method", dest="method", default="binomial", choices=['binomial', 'fisher', 'poisson'],
-                            help="statistical method: binomial, fisher exact test, or poisson, default=binomial")
+    group_stat.add_argument("--method", dest="method", default="binomial", choices=['binomial', 'poisson'],
+                            help="Statistical method to test the significance of m6A.")
     group_stat.add_argument("--CR", dest="conversion_rate", default="gene", choices=['gene', 'overall'],
-                            help="conversion rate used: gene or overall, default=gene")
+                            help="The control conversion rate used to establish statistical models")
     group_stat.add_argument("--NA", dest="non_anno", default="ELSE",
                             choices=['ELSE', 'Median', 'Mean', 'ALL', 'discard'],
-                            help="which CR to use if no aene annotation, default=ELSE")
-    group_stat.add_argument("--cutoff", dest="A_cutoffs", default="3",
-                            help="A-cutoffs, 1-10,15,20 or None, seperated by comma, default=3,None")
+                            help="Determining which CR to use for the sites that are not annotated to any genes")
+    group_stat.add_argument("--cutoff", dest="A_cutoffs", default="3", choices=["1","2","3","4","5","6","7","8","9","10","15","20","None"],
+                            help="A-cutoffs, The cutoff for the minimum number of remained A bases in each read")
 
     options = parser.parse_args()
     global genome,genome2,transgenome, outputdir,tool,Threads,mulMax,mismatch,anno,baseanno,prx,rvsref,outputprefix,FilterN
@@ -278,7 +299,7 @@ if __name__ == "__main__":
     FilterN = str(options.FilterN)
     outputprefix = outputdir + "/" + prx
     if options.untreated:
-        # genome = genome.split(".AG_conversion.fa")[0]
+        genome = genome.split(".AG_conversion.fa")[0]
         transgenome = transgenome.split(".AG_conversion.fa")[0]
 
     if baseanno == 'None':
