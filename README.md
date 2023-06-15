@@ -158,7 +158,7 @@ GLORI-tools takes cleaned reads as input and finally reports files for the conve
 | :---: | :---: |
 | ${your_prefix}_merged.sorted.bam | The overall mapping of reads in .bam format |
 |  ${your_prefix}_referbase.mpi |  The text pileup output from .bam files |
-|  ${your_prefix}.totalCR.txt | The text file containing the median value of the overall conversion rate for each transcriptome and gene |
+|  ${your_prefix}.totalCR.txt | The text file containing the median value of the overall A-to-G conversion rate for each transcriptome and gene |
 |  ${your_prefix}.totalm6A.FDR.csv | The final list of m6A sites obtained, with the A rate serving as the m6A level |
 
 #### 5.2 GLORI sites files
@@ -176,6 +176,12 @@ GLORI-tools takes cleaned reads as input and finally reports files for the conve
 | Ratio | A rate for the sites/ or methylation level for the sites |
 | Pvalue | test for A rate based on the background |
 | P_adjust | FDR ajusted P value |
+
+#### 5.3 GLORI conversion rate (.totalCR) files
+| Columns | Interpretation |
+| :---: | :---: |
+| SA | chromosomes or genes |
+| A-to-G_ratio |  A-to-G conversion rate for each chromosome and gene |
 
 ## Maintainers and Contributing
 * GLORI-tools is developed and maintained by Cong Liu (liucong-1112@pku.edu.cn).
