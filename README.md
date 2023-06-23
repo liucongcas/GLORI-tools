@@ -3,6 +3,7 @@
 ## News
 * As of June 15th, 2023, We have updated the format of the .totalCR.txt file to make it more user-friendly and easier to read. Please see Section 5.3 for details.
 * As of June 23th, 2023, We have added an ciatiaon information for GLORI-tools. 
+* As of June 23th, 2023, an additional run parameter has been added to obtain a comprehensive list of all annotated A citations. Please refer to Section 4.5 for details
 
 ## Table of content
 * Background
@@ -153,6 +154,14 @@ GLORI-tools takes cleaned reads as input and finally reports files for the conve
 #### 4.4 mapping with samples without GLORI treatment
 
 * ``` python ${tooldir}/run_GLORI.py -i $tooldir -q ${file} -T $Thread -f ${genome} -rvs ${rvsgenome} -Tf ${TfGenome} -a $anno -pre ${prx} -o $outputdir --combine --untreated ```
+
+#### 4.5 call all the annotated A cites
+
+1) with annotation:
+* ``` python ${tooldir}/run_GLORI.py -i $tooldir -q ${file} -T $Thread -f ${genome} -f2 ${genome2} -rvs ${rvsgenome} -Tf ${TfGenome} -a $anno -b $baseanno -pre ${prx} -o $outputdir --combine --rvs_fac -c 1 -C 1 -r 0 -p 1.1 -adp 1.1 -s 0 ```
+  
+2) or without annotation
+* ``` python ${tooldir}/run_GLORI.py -i $tooldir -q ${file} -T $Thread -f ${genome} -f2 ${genome2} -rvs ${rvsgenome} -Tf ${TfGenome} -a $anno -pre ${prx} -o $outputdir --combine --rvs_fac -c 1 -C 1 -r 0 -p 1.1 -adp 1.1 -s 0 ```
 
 ### 5 Resultes:
 #### 5.1 Output files of GLORI
