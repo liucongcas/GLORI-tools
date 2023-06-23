@@ -15,27 +15,26 @@ import itertools
 import time
 from heapq import merge
 import glob
-from time import gmtime, strftime
+from time import strftime
 from Bio.Seq import reverse_complement
 
 
-parser = argparse.ArgumentParser(description = "building index for reference with three bases")
+parser = argparse.ArgumentParser(description = "reads alignment")
 parser.add_argument("-q", "--fastq", nargs="?", type=str, default=sys.stdin, help = "fastqfiles with surfix as _1.fq;_1.fastq;_2.fq;_2.fastq")
-parser.add_argument("-p", "--Threads", nargs="?", type=str, default='1', help = "number of alignment threads to launch")
-parser.add_argument("-f", "--reference", nargs="?", type=str, default=sys.stdin, help = "indexfile")
-parser.add_argument("-rvs", "--rvsref", nargs="?", type=str, default=sys.stdin, help = "transcriptom reference indexfile")
-parser.add_argument("-Tf", "--transref", nargs="?", type=str, default=sys.stdin, help = "transcriptom reference indexfile")
-parser.add_argument("-t", "--tools", nargs="?", type=str, default=sys.stdin, help="bowtie,STAR")
-parser.add_argument("-m", "--mismatch", nargs="?", type=int, default=2, help="mapping mismatch")
-parser.add_argument("-F", "--FilterN", nargs="?", type=str, default=0.5, help="MinOverLread")
-parser.add_argument("-mulMax", "--mulMax", nargs="?", type=int, default=1, help="suppress all alignments if > <int> exist")
-parser.add_argument("--combine", "--combine", help="whether mapping with changed reads",action="store_true")
-parser.add_argument("--untreated", "--untreated", help="if the input is untreated",action="store_true")
-parser.add_argument("--local", "--local", help="whether use local algrithm",action="store_true")
-parser.add_argument("--readsname", "--readsname", help="whether use readsname as changedfastqname",action="store_true")
+parser.add_argument("-f", "--reference", nargs="?", type=str, default=sys.stdin, help = "Index file for the genome")
+parser.add_argument("-rvs", "--rvsref", nargs="?", type=str, default=sys.stdin, help = "Index file for the minus strand of the genome")
+parser.add_argument("-Tf", "--transref", nargs="?", type=str, default=sys.stdin, help = "Index file for the minus strand of the transcriptome")
+parser.add_argument("-t", "--tools", nargs="?", type=str, default=sys.stdin,
+                    help="We recommend using STAR for genome alignment and Bowtie for transcriptome alignment")
+parser.add_argument("-m", "--mismatch", nargs="?", type=int, default=2, help="Permitted mapping mismatches")
+parser.add_argument("-F", "--FilterN", nargs="?", type=str, default=0.5, help="The setting for the STAR parameter --outFilterScoreMinOverLread")
+parser.add_argument("-mulMax", "--mulMax", nargs="?", type=int, default=1, help="Suppress all alignments if > <int> exist")
+parser.add_argument("--combine", "--combine", help="Whether mapping to transcriptome",action="store_true")
+parser.add_argument("--untreated", "--untreated", help="If the input is untreated",action="store_true")
 parser.add_argument("-pre", "--outname_prefix", nargs="?", type=str, default='default',help = "--outname_prefix")
 parser.add_argument("-o", "--outputdir", nargs="?", type=str, default=sys.stdin, help="outputdir")
-parser.add_argument("--rvs_fac", "--rvs_fac",help="whether use rvs_fac algrithm", action="store_true")
+parser.add_argument("--rvs_fac", "--rvs_fac",help="Whether to map to the reverse strand of the transcriptome", action="store_true")
+parser.add_argument("-p", "--Threads", nargs="?", type=str, default='1', help = "Used threads")
 args = parser.parse_args()
 
 
@@ -143,19 +142,15 @@ def mapping_files(tool,fastq,reference,Threads,muta_N,fqname,outputdir,mulMax,fl
     outputfile = outputdir +fqname+".sam"
     unmapfastq = outputdir +fqname+"_un_2.fq"
     if tool == "bowtie":
-        if args.local:
-            print("Erro: bowtie do not support --local parameter")
-            os._exit(0)
-        else:
-            para_0 = 'bowtie -k 1 -m '+ str(mulMax)
-            para_A = ' -v '+ str(muta_N)
-            para_B = ' --best --strata -p ' + Threads
-            para_C = ' -x '+ reference +" "+ fastq +' -S ' + outputfile
-            para_unmap = ' --un ' + unmapfastq
-            para_end = ' 2>' + outputfile +'.output'
-            command = para_0+para_A+para_B+para_C+para_unmap+para_end
-            print(command)
-            subprocess.call(command,shell=True)
+        para_0 = 'bowtie -k 1 -m '+ str(mulMax)
+        para_A = ' -v '+ str(muta_N)
+        para_B = ' --best --strata -p ' + Threads
+        para_C = ' -x '+ reference +" "+ fastq +' -S ' + outputfile
+        para_unmap = ' --un ' + unmapfastq
+        para_end = ' 2>' + outputfile +'.output'
+        command = para_0+para_A+para_B+para_C+para_unmap+para_end
+        print(command)
+        subprocess.call(command,shell=True)
     elif tool == "STAR":
         para_0 = "STAR --runThreadN "+ Threads
         para_g = " --genomeDir "+ reference[:-3]
@@ -175,7 +170,8 @@ def mapping_files(tool,fastq,reference,Threads,muta_N,fqname,outputdir,mulMax,fl
         print("samtools view -F " + flag + " -@ " + Threads+" -h " + outputfile[:-3] + 'Aligned.out.bam | samtools sort -n -O SAM > ' + outputfile)
         subprocess.call("samtools view -F " + flag + " -@ " + Threads+" -h " + outputfile[:-3] + 'Aligned.out.bam | samtools sort -n -O SAM > ' + outputfile, shell=True)
         subprocess.call("mv " + outputfile[:-3] + 'Unmapped.out.mate1 ' + unmapfastq, shell=True)
-        # subprocess.call("rm -f " + outputfile[:-3] + 'Aligned.out.sam', shell=True)
+        subprocess.call("rm -f " + outputfile[:-3] + 'Aligned.out.sam', shell=True)
+        subprocess.call("rm -f " + outputfile[:-3] + 'Aligned.out.bam', shell=True)
     return outputfile,unmapfastq
 
 
@@ -188,7 +184,6 @@ def getbamfiles(outputfile,fac,Threads,flag):
     subprocess.call("samtools index " + output_bam, shell=True)
     subprocess.call("rm -f " + outputfile, shell=True)
     return output_bam
-
 
 
 def multi_sub(string,sitesA,repl):
@@ -268,7 +263,7 @@ def reverseReads(outputfile_change,output_bed,reverse_fac,Threads,flag):
     print("samtools view -F " + flag + " -@ " + Threads+" -h " + outputfile_change + " | samtools sort -n -O SAM > " +sorted_sam)
     subprocess.call("samtools view -F " + flag + " -@ " + Threads+" -h " + outputfile_change + " | samtools sort -n -O SAM > " +sorted_sam,shell=True)
 
-    # subprocess.call("rm -f " + outputfile_change, shell=True)
+    subprocess.call("rm -f " + outputfile_change, shell=True)
     reverse_sam = outputfile_change[:-4] + "_r.sam"
     f1 = open(sorted_sam,'r')
     f2 = open(output_bed+"_sorted",'r')
@@ -330,10 +325,8 @@ if __name__ == "__main__":
         pass
     else:
         os.makedirs(outputdir2)
-    if args.readsname:
-        fqname2 = "_".join(os.path.basename(fastq).split(".")[:-1])
-    else:
-        fqname2= outname_prx
+
+    fqname2= outname_prx
 
     if args.untreated:
         sys.stderr.write("[%s]untreated...\n" % strftime("%Y-%m-%d %H:%M:%S", time.localtime()))
