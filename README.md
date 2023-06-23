@@ -2,7 +2,7 @@
 **GLORI-tools currently works, but is still being optimized for a better user experience.**
 ## News
 * As of June 15th, 2023, We have updated the format of the .totalCR.txt file to make it more user-friendly and easier to read. Please see Section 5.3 for details.
-
+* As of June 23th, 2023, We have added an ciatiaon information for GLORI-tools. 
 
 ## Table of content
 * Background
@@ -192,6 +192,10 @@ GLORI-tools takes cleaned reads as input and finally reports files for the conve
 
 ## Licences
 * Released under MIT license
+
+## Citation
+please cite:
+Liu C., Sun H., Yi Y., Shen W., Li K., Xiao Y., et al. (2022). Absolute quantification of single-base m6A methylation in the mammalian transcriptome using GLORI. Nat. Biotechnol. (https://www.nature.com/articles/s41587-022-01487-9)
 
 
 
