@@ -158,7 +158,7 @@ GLORI-tools takes cleaned reads as input and finally reports files for the conve
 #### 4.5 call all the annotated A cites
 
 1) with annotation:
-* ``` python ${tooldir}/run_GLORI.py -i $tooldir -q ${file} -T $Thread -f ${genome} -f2 ${genome2} -rvs ${rvsgenome} -Tf ${TfGenome} -a $anno -b $baseanno -pre ${prx} -o $outputdir --combine --rvs_fac -c 1 -C 1 -r 0 -p 1.1 -adp 1.1 -s 0 ```
+* ``` python ${tooldir}/run_GLORI.py -i $tooldir -q ${file} -T $Thread -f ${genome} -f2 ${genome2} -rvs ${rvsgenome} -Tf ${TfGenome} -a $anno -b $baseanno -pre ${prx} -o $outputdir --combine --rvs_fac -c 1 -C 0 -r 0 -p 1.1 -adp 1.1 -s 0 ```
   
 2) or without annotation
 * ``` python ${tooldir}/run_GLORI.py -i $tooldir -q ${file} -T $Thread -f ${genome} -f2 ${genome2} -rvs ${rvsgenome} -Tf ${TfGenome} -a $anno -pre ${prx} -o $outputdir --combine --rvs_fac -c 1 -C 0 -r 0 -p 1.1 -adp 1.1 -s 0 ```
