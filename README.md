@@ -153,7 +153,7 @@ GLORI-tools takes cleaned reads as input and finally reports files for the conve
 
 #### 4.4 mapping with samples without GLORI treatment
 
-* ``` python ${tooldir}/run_GLORI.py -i $tooldir -q ${file} -T $Thread -f ${genome} -rvs ${rvsgenome} -Tf ${TfGenome} -a $anno -pre ${prx} -o $outputdir --combine --untreated ```
+* ``` python ${tooldir}/run_GLORI.py -i $tooldir -q ${file} -T $Thread -f ${genome} -Tf ${TfGenome} -a $anno -pre ${prx} -o $outputdir --combine --untreated ```
 
 #### 4.5 call all the annotated A cites
 
