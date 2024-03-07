@@ -1,9 +1,7 @@
 # GLORI-tools v1.0
 **GLORI-tools currently works, but is still being optimized for a better user experience.**
 
-- ![#f03c15](https://placehold.co/15x15/f03c15/f03c15.png) `#f03c15`
-
-- ![#f03c15](Hi, many friends have encountered various issues while building the STAR index. Please make sure you run this step with enough memory. Additionally, you can use chromosomes 1-22 + X, Y, Z in hg38 as your genome. Please ensure that your genome sequence's name begins with "chr" as we have only tested GLORI on human and mouse genomes.) `#f03c15`
+*🔥NEW🔥 Hi, many friends have encountered various issues while building the STAR index. Please make sure you run this step with enough memory. Additionally, you can use chromosomes 1-22 + X, Y, Z in hg38 as your genome. Please ensure that your genome sequence's name begins with "chr" as we have only tested GLORI on human and mouse genomes.
 
 ## News
 * As of June 15th, 2023, We have updated the format of the .totalCR.txt file to make it more user-friendly and easier to read. Please see Section 5.3 for details.
