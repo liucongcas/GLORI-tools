@@ -90,8 +90,12 @@ def build_index(changed_refer,tool,Threads):
         subprocess.call('bowtie2-build -q ' + changed_refer + ' ' + changed_refer,shell=True)
     elif tool == "STAR":
         filedir_STAR = changed_refer[:-3]
-        # subprocess.call('rm -rf ' + filedir_STAR + " 2>/dev/null", shell=True)
-        # subprocess.call('mkdir -p ' + filedir_STAR, shell=True)
+        if not os.path.exists(filedir_STAR):
+            os.makedirs(filedir_STAR)
+        else:
+            print("Path is still exist,deleting the original filedir")
+            os.rmdir(filedir_STAR)
+            os.makedirs(filedir_STAR)
         fh = pysam.FastaFile(changed_refer)
         genomesize = sum(fh.lengths)
         Nbases = int(round(min(14, np.log2(genomesize)/2 - 1)))
