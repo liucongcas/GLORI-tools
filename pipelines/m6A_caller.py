@@ -117,7 +117,10 @@ def call_m6A(line, col):
                 else:
                     nonCR = nonCRs.get("control")
             if options.method == "binomial":
-                pvalue = scipy.stats.binom_test(A_count_col, n=AG_col, alternative='greater', p=nonCR)
+		try:
+                    pvalue = scipy.stats.binom_test(A_count_col, n=AG_col, alternative='greater', p=nonCR)
+                except AttributeError:
+                    pvalue = scipy.stats.binomtest(A_count_col, n=AG_col, alternative='greater', p=nonCR)
             elif options.method == "fisher":
                 pass
             elif options.method == "poisson":
