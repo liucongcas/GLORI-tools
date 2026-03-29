@@ -91,11 +91,11 @@ Get the required annotation table files:
 
 Get the longest transcript:
 
-* ``` python ./get_anno/selected_longest_transcrpts_fa.py -anno GCF_000001405.39_GRCh38.p13_genomic.gtf_change2Ens.tbl2 -fafile GCF_000001405.39_GRCh38.p13_rna.fa --outname_prx GCF_000001405.39_GRCh38.p13_rna2.fa```
+* ``` python ./get_anno/selected_longest_transcrpts_fa.py -anno GCF_000001405.39_GRCh38.p13_genomic.gtf_change2Ens.tbl2 -fafile GCF_000001405.39_GRCh38.p13_rna.fna --outname_prx GCF_000001405.39_GRCh38.p13_rna2.fa```
 
 2.2.2 build reference with bowtie
 
-* ```python ./pipelines/build_transcriptome_index.py -f $ GCF_000001405.39_GRCh38.p13_rna2.fa -pre GCF_000001405.39_GRCh38.p13_rna2.fa```
+* ```python ./pipelines/build_transcriptome_index.py -f GCF_000001405.39_GRCh38.p13_rna2.fa -pre GCF_000001405.39_GRCh38.p13_rna2.fa```
 
 you will get:
 * $ GCF_000001405.39_GRCh38.p13_rna2.fa.AG_conversion.fa
