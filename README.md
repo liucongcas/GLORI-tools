@@ -132,7 +132,7 @@ GLORI-tools takes cleaned reads as input and finally reports files for the conve
 | genomdir=your_dir |
 | genome=${genomdir}/hg38.AG_conversion.fa |
 | genome2=${genomdir}/hg38.fa |
-| rvsgenome=${genomdir}/hg38.revCom.fa |
+| rvsgenome=${genomdir}/hg38.AG_conversion.fa |
 | TfGenome=${genomdir}/GCF_000001405.39_GRCh38.p13_rna2.fa.AG_conversion.fa |
 | annodir=your_dir |
 | baseanno=${annodir}/GCF_000001405.39_GRCh38.p13_genomic.gtf_change2Ens.tbl2.noredundance.base |
